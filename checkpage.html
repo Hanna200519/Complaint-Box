@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Complaint Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            /* Matching the Home Page Background */
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            /* Matching the Home Page Shadow */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #34495e;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #2ecc71; /* Green glow when typing */
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #2ecc71; /* Matching the Home Page Green */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* Status Result Box Styling */
+        .status-result {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 5px solid #2ecc71;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none; /* Hidden until search */
+            color: #2c3e50;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #95a5a6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #34495e;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="statusForm">
+        <h2>🔍 Track Status</h2>
+        
+        <label for="complaint_id">Complaint ID</label>
+        <input type="text" id="complaint_id" name="complaint_id" placeholder="Enter your complaint ID" required>
+
+        <button type="submit">Check Status</button>
+        
+        <div class="status-result"></div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="back-link">← Return to Home</a>
+        </div>
+    </form>
+
+<script>
+    document.getElementById('statusForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const refId = document.getElementById('complaint_id').value;
+        const resultBox = document.querySelector('.status-result');
+        
+        try {
+            // Updated to use the refId in the URL if your API supports it
+            const response = await fetch(`http://localhost:5000/api/status/${refId}`);
+            const data = await response.json();
+            
+            if (response.ok) {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `
+                    <p><strong>Status:</strong> ${data.status}</p>
+                    <p><strong>Title:</strong> ${data.title}</p>
+                `;
+            } else {
+                alert("Complaint ID not found. Please check and try again.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Could not connect to the server.");
+        }
+    });
+</script>
+
+</body>
+</html>

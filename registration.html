@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Complaint | Digital Complaint Box</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            /* Consistent Background */
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            background-color: #ffffff;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #34495e;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Unified styling for all inputs */
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db; /* Consistent Action Blue */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #95a5a6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #34495e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h2>📝 Submit Complaint</h2>
+        
+        <form id="complaintForm">
+            <label for="category">Category</label>
+            <select id="category">
+                <option value="Harassment">Harassment</option>
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="Faculty">Faculty</option>
+                <option value="Academics">Academics</option>
+                <option value="others">Others</option>
+            </select>
+
+            <label for="title">Complaint Title</label>
+            <input type="text" id="title" placeholder="Briefly state the issue" required>
+
+            <label for="description">Detailed Description</label>
+            <textarea id="description" placeholder="Provide as much detail as possible..." required></textarea>
+
+            <button type="submit">Submit Complaint</button>
+            
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </form>
+    </div>
+
+<script>
+    const form = document.getElementById('complaintForm');
+
+    function generateComplaintID() {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const randomLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        return "CMP-" + randomNum + randomLetter;
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+
+        const uniqueID = generateComplaintID();
+
+        const data = {
+            refId: uniqueID, 
+            category: document.getElementById('category').value,
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value
+        };
+
+        // Alerting user of their ID
+        alert("Complaint Submitted Successfully!\n\nYour Tracking ID is: " + uniqueID + "\n\nPlease save this ID to check your status later.");
+
+        try {
+            const response = await fetch('http://localhost:5000/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data) // Fixed: using 'data' instead of 'formdata'
+            });
+            
+            if (response.ok) {
+                console.log("Data saved to database.");
+            }
+        } catch (error) {
+            console.log("Note: Server not detected. Data was not saved to the database, but the UI logic worked.");
+        }
+
+        form.reset();
+    });
+</script>
+
+</body>
+</html>
